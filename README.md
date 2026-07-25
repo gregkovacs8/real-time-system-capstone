@@ -43,6 +43,7 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 * **Defensive Firmware & Fault-Tolerant System Design**
   * *Skill Used:* Non-blocking queue timeouts, back-pressure handling, null-pointer safeguards, graceful degradation.
   * *Aerospace Application:* Aligns with **DO-178C** and **MIL-STD-882E** safety standards to ensure the satellite degrades gracefully during hardware failures rather than triggering a catastrophic reset.
+
 ---
 
 ## 3. System Architecture & Dual-Core Partitioning
