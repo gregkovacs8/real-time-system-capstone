@@ -30,7 +30,7 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 
 ## 4. Task Table & WCET Schedulability Analysis
 
-| Task Name | Priority | Core | Period ($T_i$) | Measured WCET ($C_i$) | Utilization ($U_i = C_i / T_i$) | Schedulability Bound |
+| Task Name | Priority | Core | Period (T_i) | Measured WCET (C_i) | Utilization (U_i = C_i / T_i) | Schedulability Bound |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | `producer_task` | 8 | Core 1 | 50.0 ms | 1.80 ms | 0.0360 | Meets RM Bound |
 | `consumer_task` | 8 | Core 1 | 50.0 ms | 2.50 ms | 0.0500 | Meets RM Bound |
@@ -42,14 +42,13 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 
 **Total utilization on the real-time control plane (Core 1):**
 
-$$U_{\text{Core1}} = \sum_{i=1}^{n} \frac{C_i}{T_i} = 0.0360 + 0.0500 + 0.0080 + 0.0160 = 0.1100 \quad (11.0\%)$$
+> U_Core1 = Sum(C_i / T_i) = 0.0360 + 0.0500 + 0.0080 + 0.0160 = **0.1100 (11.0%)**
 
-**The Rate-Monotonic (RM) sufficiency bound for $n = 4$ periodic tasks is:**
+**The Rate-Monotonic (RM) sufficiency bound for n = 4 periodic tasks is:**
 
-$$U_{\text{RM}}(4) = 4 \left(2^{1/4} - 1\right) \approx 0.7568 \quad (75.68\%)$$
+> U_RM(4) = 4 * (2^(1/4) - 1) ≈ **0.7568 (75.68%)**
 
-> Since **$U_{\text{Core1}} = 0.1100 \le 0.7568$**, the real-time flight control loop is proven strictly deterministic and schedulable with **89% CPU slack** under Rate-Monotonic and Earliest-Deadline-First (EDF) rules.
-
+Since **U_Core1 = 0.1100 ≤ 0.7568**, the real-time flight control loop is proven strictly deterministic and schedulable with **89% CPU slack** under Rate-Monotonic and Earliest-Deadline-First (EDF) rules.
 ---
 
 ## 5. Hazard Analysis & Standards Mapping
