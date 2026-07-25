@@ -19,31 +19,30 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 
 ---
 
-## 💼 Engineering Portfolio Highlights & Recruiter Summary
+## 💼 Recruiter Quick-Scan: Core Skills & Industry Application
 
-> **Target Role Alignment:** Embedded Software Engineer / Defense & Aerospace Flight Firmware Engineer  
-> **Key Technical Keywords:** ESP32-S3, Dual-Core FreeRTOS, AOCS Flight Control, Deterministic Rate-Monotonic Schedulability, Bare-Metal C/C++, Cross-Core IPC, Hardware ISR Debounce, DO-178C, MIL-STD-882E.
+**Target Roles:** Embedded Firmware Engineer | Flight Software Engineer | Defense & Aerospace Systems  
+**Core Tech Stack:** C/C++, FreeRTOS, ESP32-S3 (Dual-Core), ESP-IDF, Bare-Metal Drivers, Git, Logic Analyzers
 
-### Candidate Highlights & Project Blueprint
-This project demonstrates an end-to-end, deterministic satellite flight software architecture designed to meet rigorous aerospace reliability standards. Rather than running a monolithic loop, SAT-1 partitions real-time flight loops from non-deterministic network observability using hardware core pinning and FreeRTOS task primitives.
+---
 
-* **Dual-Core Hardware Isolation:** Core 1 is strictly reserved for the 20 Hz Attitude and Orbit Control System (AOCS) flight loops, while Core 0 handles HTTP/TCP network sockets and Wi-Fi drivers. This guarantees zero microsecond phase jitter on critical sensor sampling regardless of external network traffic.
-* **Mathematically Proven Determinism:** Formally calculated worst-case execution times (WCET) yield a total Core 1 CPU utilization of 11.0%, well beneath the Rate-Monotonic Analysis (RMA) upper bound of 75.68%. The pipeline is proven real-time deterministic with 89% CPU headroom for dynamic task allocation.
-* **Low-Latency Sub-3.4 µs ISR Handling:** Utilizes direct-to-task notifications (`vTaskNotifyGiveFromISR`) within a 200 µs software-debounced GPIO interrupt service routine, waking high-priority downlink tasks in less than 3.4 microseconds.
-* **Defensive Firmware & Fault Injection:** Built aligned with DO-178C and MIL-STD-882E guidelines, featuring 5 ms non-blocking queue back-pressure timeouts, graceful frame dropping during consumer stalls, and boot-sequence null-pointer guards to prevent kernel panics.
+### Key Skills & Direct Industry Relevance
 
-### Production & Architecture Comparison Matrix
+* **Dual-Core Task Isolation (Asymmetric Multiprocessing)**
+  * *Skill Used:* Core pinning (`xTaskCreatePinnedToCore`), hardware-level separation of critical vs. non-critical threads.
+  * *Aerospace Application:* Separates safety-critical AOCS flight control loops from non-deterministic communication stacks (Wi-Fi/Telemetry), ensuring flight control never suffers phase jitter or preemption.
 
-| Architectural Metric | Standard Academic Embedded Project | SAT-1 Production-Grade Aerospace Architecture |
-| :--- | :--- | :--- |
-| **Processor Strategy** | Single-core monolithic super-loop | **Asymmetric Dual-Core Partitioning** (ESP32-S3 Xtensa LX7 @ 240 MHz) |
-| **Real-Time Guarantee** | Best-effort empirical timing | **Formal Rate-Monotonic Analysis Proof** (U = 11.0% <= 75.68%) |
-| **Inter-Process Comm (IPC)** | Global shared variables with raw flags | **FreeRTOS Typed Queues, Event Groups & Direct Task Notifications** |
-| **Interrupt Latency** | Variable (subject to polling / mutex lock) | **Sub-3.4 µs Wakeup Latency** via `vTaskNotifyGiveFromISR` |
-| **Network Interference** | Blocking web server stalls control loop | **Hardware Core Isolation** (HTTP / Wi-Fi offloaded entirely to Core 0) |
-| **Fault Tolerance** | Infinite blocking wait (`portMAX_DELAY`) | **5 ms Non-Blocking Back-Pressure Timeout** & Graceful Frame Dropping |
-| **Boot Safety** | Assumes pre-allocated memory handles | **Defensive Null-Pointer Guards** (`if (responder_handle != NULL)`) |
+* **Deterministic Real-Time Scheduling & Schedulability Analysis**
+  * *Skill Used:* Rate-Monotonic Analysis (RMA), Worst-Case Execution Time (WCET) profiling, priority inheritance.
+  * *Aerospace Application:* Mathematically proves flight software meets hard real-time deadlines before deployment, a core requirement for flight-heritage software qualification.
 
+* **Inter-Processor Communication (IPC) & Low-Latency ISRs**
+  * *Skill Used:* FreeRTOS Queues, Event Groups, Direct Task Notifications (`vTaskNotifyGiveFromISR`), software hardware debouncing.
+  * *Aerospace Application:* Enables sub-3.4 µs response times for fault handling, sensor fusion, and actuator commands without lock contention or thread starvation.
+
+* **Defensive Firmware & Fault-Tolerant System Design**
+  * *Skill Used:* Non-blocking queue timeouts, back-pressure handling, null-pointer safeguards, graceful degradation.
+  * *Aerospace Application:* Aligns with **DO-178C** and **MIL-STD-882E** safety standards to ensure the satellite degrades gracefully during hardware failures rather than triggering a catastrophic reset.
 ---
 
 ## 3. System Architecture & Dual-Core Partitioning
