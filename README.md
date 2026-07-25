@@ -19,30 +19,20 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
   
 ---
 
-## 💼 Recruiter Quick-Scan: Core Skills & Industry Application
+## 💼 Recruiter Quick-Scan: Core Skills & Keywords
 
 **Target Roles:** Embedded Firmware Engineer | Flight Software Engineer | Defense & Aerospace Systems  
-**Core Tech Stack:** C/C++, FreeRTOS, ESP32-S3 (Dual-Core), ESP-IDF, Bare-Metal Drivers, Git, Logic Analyzers
+**Core Stack:** C/C++, FreeRTOS, ESP32-S3, ESP-IDF, Bare-Metal Drivers, Git, Logic Analyzers  
+**Safety & Standards:** DO-178C, MIL-STD-882E, MISRA C:2012, ECSS Standards
 
 ---
 
-### Key Skills & Direct Industry Relevance
+### Core Engineering Capabilities
 
-* **Dual-Core Task Isolation (Asymmetric Multiprocessing)**
-  * *Skill Used:* Core pinning (`xTaskCreatePinnedToCore`), hardware-level separation of critical vs. non-critical threads.
-  * *Aerospace Application:* Separates safety-critical AOCS flight control loops from non-deterministic communication stacks (Wi-Fi/Telemetry), ensuring flight control never suffers phase jitter or preemption.
-
-* **Deterministic Real-Time Scheduling & Schedulability Analysis**
-  * *Skill Used:* Rate-Monotonic Analysis (RMA), Worst-Case Execution Time (WCET) profiling, priority inheritance.
-  * *Aerospace Application:* Mathematically proves flight software meets hard real-time deadlines before deployment, a core requirement for flight-heritage software qualification.
-
-* **Inter-Processor Communication (IPC) & Low-Latency ISRs**
-  * *Skill Used:* FreeRTOS Queues, Event Groups, Direct Task Notifications (`vTaskNotifyGiveFromISR`), software hardware debouncing.
-  * *Aerospace Application:* Enables sub-3.4 µs response times for fault handling, sensor fusion, and actuator commands without lock contention or thread starvation.
-
-* **Defensive Firmware & Fault-Tolerant System Design**
-  * *Skill Used:* Non-blocking queue timeouts, back-pressure handling, null-pointer safeguards, graceful degradation.
-  * *Aerospace Application:* Aligns with **DO-178C** and **MIL-STD-882E** safety standards to ensure the satellite degrades gracefully during hardware failures rather than triggering a catastrophic reset.
+* **Dual-Core & Multi-Threading:** Core pinning (`xTaskCreatePinnedToCore`) to isolate real-time flight control from Wi-Fi/Telemetry stacks.
+* **Real-Time Systems (RTOS):** Rate-Monotonic Analysis (RMA), priority scheduling, and Worst-Case Execution Time (WCET) timing verification.
+* **IPC & Interrupt Handlers:** Low-latency FreeRTOS Queues, Event Groups, Direct Task Notifications, and hardware ISR debouncing (< 3.4 µs response).
+* **Defensive Firmware Design:** Non-blocking queue timeouts, null-pointer guards, back-pressure handling, and graceful degradation for safety-critical hardware failures.
 
 ---
 
