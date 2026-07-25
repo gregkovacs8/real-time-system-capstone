@@ -1,8 +1,3 @@
-<div align="center" style="max-width: 600px; margin: 20px auto;">
-  <!-- Replace SRC URL below with your logo image link -->
-  <img src="https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e" alt="SAT-1 System Logo" style="width: 100%; height: auto; object-fit: contain; display: block;" />
-</div>
-
 # real-time-system-capstone
 ## SAT-1 Spacecraft Control Telemetry Matrix — EEL 4775 Capstone
 
@@ -24,6 +19,10 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ---
 
 ## 3. System Architecture & Dual-Core Partitioning
+<div align="center" style="max-width: 600px; margin: 20px auto;">
+  <!-- Replace SRC URL below with your logo image link -->
+  <img src="https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e" alt="SAT-1 System Logo" style="width: 100%; height: auto; object-fit: contain; display: block;" />
+</div>
 
 ### IPC Primitive Contracts
 * **Typed FIFO Queue (`data_q`):** Drains 32-byte `aocs_sample_t` payloads between `producer_task` and `consumer_task` with a 16-item depth buffer and a 5 ms non-blocking timeout policy.
