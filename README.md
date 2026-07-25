@@ -1,5 +1,8 @@
-# real-time-system-capstone
-## SAT-1 Spacecraft Control Telemetry Matrix — EEL 4775 Capstone
+<div align="center" style="max-width: 600px; margin: 20px auto;">
+  <img src="https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e" alt="SAT-1 System Logo" style="width: 100%; height: auto; object-fit: contain; display: block;" />
+</div>
+
+# SAT-1 Spacecraft Control Telemetry Matrix — EEL 4775 Capstone
 
 * **Target Role Focus:** Defense & Aerospace Embedded Firmware / Space Systems
 * **Wokwi Simulation Target:** `KOVACS-FINAL-RTS26Summer`
@@ -13,16 +16,69 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ---
 
 ## 2. System Demo & Links
-* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/)
+* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/projects/470018929306724353)
 * **Embedded Demo Video:** *(Insert your YouTube video link here)*
 
 ---
 
 ## 3. System Architecture & Dual-Core Partitioning
-<div align="center" style="max-width: 600px; margin: 20px auto;">
-  <!-- Replace SRC URL below with your logo image link -->
-  <img src="https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e" alt="SAT-1 System Logo" style="width: 100%; height: auto; object-fit: contain; display: block;" />
-</div>
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    subgraph External["External / Physical Layer"]
+        BTN["Manual Ground Override<br/>(Button Pin 18)"]
+        ISR["button_isr()<br/>Interrupt Context"]
+        BTN -->|Falling Edge Negative Pulse| ISR
+    end
+
+    subgraph Core0["CORE 0: Networking & Observability Plane"]
+        direction LR
+        WEBMON["webmonitor_task<br/>Priority 4<br/>(HTTP / JSON State)"]
+        SERMON["serial_monitor_task<br/>Priority 4<br/>(Telemetry Logger)"]
+    end
+
+    subgraph Core1["CORE 1: Critical Real-Time Flight Controls"]
+        PROD["producer_task<br/>Priority 8<br/>20 Hz AOCS Poll"]
+        CONS["consumer_task<br/>Priority 8<br/>Fusion Engine"]
+        COORD["coordinator_task<br/>Priority 9<br/>Synchronizer"]
+        RESP["responder_task<br/>Priority 12<br/>Telemetry Downlink"]
+    end
+
+    subgraph IPC["Inter-Process Communication Primitives"]
+        QUEUE[("data_q Queue<br/>Depth: 16 items")]
+        FLAGS{"evt_group<br/>Event Flags"}
+    end
+
+    PROD -->|1. xQueueSend| QUEUE
+    PROD -->|2. Set EV_BIT_DATA_PRODUCED| FLAGS
+    
+    QUEUE -->|3. xQueueReceive| CONS
+    CONS -->|4. Set EV_BIT_DATA_PROCESSED| FLAGS
+
+    FLAGS -->|5. xEventGroupWaitBits| COORD
+    COORD -->|6. xTaskNotifyGive| RESP
+
+    ISR -->|vTaskNotifyGiveFromISR| RESP
+
+    WEBMON -.->|Read Queue Depth| QUEUE
+    WEBMON -.->|Read Flags Atomically| FLAGS
+    SERMON -.->|Read Queue Depth| QUEUE
+    SERMON -.->|Read Flags Atomically| FLAGS
+
+    classDef core0Style fill:#1e293b,stroke:#0284c7,stroke-width:2px,color:#f8fafc;
+    classDef core1Style fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef isrStyle fill:#451a03,stroke:#f97316,stroke-width:2px,color:#fff;
+    classDef ipcStyle fill:#111827,stroke:#6366f1,stroke-width:2px,color:#f8fafc;
+
+    class WEBMON,SERMON core0Style;
+    class PROD,CONS,COORD,RESP core1Style;
+    class ISR isrStyle;
+    class QUEUE,FLAGS ipcStyle;
+```
 
 ### IPC Primitive Contracts
 * **Typed FIFO Queue (`data_q`):** Drains 32-byte `aocs_sample_t` payloads between `producer_task` and `consumer_task` with a 16-item depth buffer and a 5 ms non-blocking timeout policy.
