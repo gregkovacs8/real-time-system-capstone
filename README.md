@@ -3,7 +3,6 @@
 * **Target Role Focus:** Defense & Aerospace Embedded Firmware / Space Systems
 * **Wokwi Simulation Target:** `KOVACS-FINAL-RTS26Summer`
 * **Target MCU:** ESP32-S3 (Dual-Core Xtensa LX7 @ 240 MHz)
-* **Engineering Reflection:** 📄 [Read the Full Quest 2 Final Engineering Reflection](./REFLECTION.md)
 
 ---
 
@@ -17,7 +16,6 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 
 * **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/projects/470485627068017665)
 * **Embedded Demo Video:** https://youtu.be/hBu8OCyqCd8
-* **Final Reflection Document:** [REFLECTION.md](./REFLECTION.md)
 
 ---
 
