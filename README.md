@@ -24,13 +24,13 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ### IPC Primitive Contracts
 * **Typed FIFO Queue (`data_q`):** Drains 32-byte `aocs_sample_t` payloads between `producer_task` and `consumer_task` with a 16-item depth buffer and a 5 ms non-blocking timeout policy.
 * **Event Group (`evt_group`):** Provides a two-way synchronization barrier (`EV_BIT_DATA_PRODUCED` & `EV_BIT_DATA_PROCESSED`) before frame serialization.
-* **Task Notification (`responder_handle`):** Low-latency direct signaling (**&lt; 3.4 µs**) from `coordinator_task` and GPIO Button ISR (`button_isr`) to trigger downlink streaming.
+* **Task Notification (`responder_handle`):** Low-latency direct signaling (**< 3.4 µs**) from `coordinator_task` and GPIO Button ISR (`button_isr`) to trigger downlink streaming.
 
 ---
 
 ## 4. Task Table & WCET Schedulability Analysis
 
-| Task Name | Priority | Core | Period ($T_i$) | Measured WCET ($C_i$) | Utilization ($U_i = C_i/T_i$) | Schedulability Bound |
+| Task Name | Priority | Core | Period (*T_i*) | Measured WCET (*C_i*) | Utilization (*U_i = C_i / T_i*) | Schedulability Bound |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | `producer_task` | 8 | Core 1 | 50.0 ms | 1.80 ms | 0.0360 | Meets RM Bound |
 | `consumer_task` | 8 | Core 1 | 50.0 ms | 2.50 ms | 0.0500 | Meets RM Bound |
@@ -42,13 +42,17 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 
 **Total utilization on the real-time control plane (Core 1):**
 
-$$U_{\text{Core1}} = \sum_{i=1}^{n} \frac{C_i}{T_i} = 0.0360 + 0.0500 + 0.0080 + 0.0160 = 0.1100 \quad (11.0\%)$$
+$$
+U_{\text{Core1}} = \sum_{i=1}^{n} \frac{C_i}{T_i} = 0.0360 + 0.0500 + 0.0080 + 0.0160 = 0.1100 \quad (11.0\%)
+$$
 
-**The Rate-Monotonic (RM) sufficiency bound for $n = 4$ periodic tasks is:**
+**The Rate-Monotonic (RM) sufficiency bound for *n* = 4 periodic tasks is:**
 
-$$U_{\text{RM}}(4) = 4 \left(2^{1/4} - 1\right) \approx 0.7568 \quad (75.68\%)$$
+$$
+U_{\text{RM}}(4) = 4 \left(2^{1/4} - 1\right) \approx 0.7568 \quad (75.68\%)
+$$
 
-> Since **$U_{\text{Core1}} = 0.1100 \le 0.7568$**, the real-time flight control loop is proven strictly deterministic and schedulable with **89% CPU slack** under Rate-Monotonic and Earliest-Deadline-First (EDF) rules.
+> Since ***U*<sub>Core1</sub> = 0.1100 ≤ 0.7568**, the real-time flight control loop is proven strictly deterministic and schedulable with **89% CPU slack** under Rate-Monotonic and Earliest-Deadline-First (EDF) rules.
 
 ---
 
@@ -75,4 +79,3 @@ $$U_{\text{RM}}(4) = 4 \left(2^{1/4} - 1\right) \approx 0.7568 \quad (75.68\%)$$
 3. Build and flash the firmware:
    ```bash
    idf.py build flash monitor
-   ```
