@@ -1,0 +1,55 @@
+# SAT-1 Flight Software — Final Engineering Reflection
+Author: Greg Kovacs  
+Course: Real-Time Systems (RTS26Summer)  
+Date: Summer 2026  
+Target Platform: ESP32-S3 Dual-Core MCU (FreeRTOS)
+
+---
+
+## Executive Summary
+
+The SAT-1 Telemetry and Flight Control Pipeline was designed as a deterministic, dual-core real-time embedded system simulating spacecraft housekeeping and control operations. Built on the ESP32-S3 platform using FreeRTOS, the architecture decouples safety-critical sensor loops and actuator control from non-deterministic network observability. 
+
+While the system successfully passed all verification criteria, achieving a total Core 1 CPU utilization of approximately 11.0% against a Rate-Monotonic Analysis (RMA) upper bound of 75.68%, the development process highlighted critical trade-offs between hardware simulation, inter-processor communication (IPC), and real-time scheduling guarantees.
+
+---
+
+## 1. What I Would Do Differently
+
+### Hardware-First Validation & Logic Analysis
+If re-architecting this project from day one, I would establish physical hardware-in-the-loop (HIL) testing and logic analyzer captures much earlier in the lifecycle. Relying on browser-based simulation tools during initial task development obscured low-level execution traits, such as real-time ISR latency, FreeRTOS context-switching overhead, and cross-core cache alignment. Bringing up the physical ESP32-S3 test bench earlier allowed me to monitor actual pin toggles on an oscilloscope, uncovering micro-jitters in task execution that simulation smooths over.
+
+### Decoupled Ring-Buffer Telemetry Architecture
+While using FreeRTOS queues (xQueueSend and xQueueReceive) served well for passing telemetry packets from Core 1 (Control) to Core 0 (Web/Observability), heavy web client polling created transient lock contention on the queue mutex. A superior architectural approach would be implementing a lock-free, single-producer single-consumer (SPSC) ring buffer in shared SRAM. This would completely isolate Core 1's execution pipeline from Core 0's memory access patterns, eliminating even nominal back-pressure delays on critical flight loops.
+
+---
+
+## 2. What Was Harder Than Expected
+
+### Managing Core-to-Core IPC Under Telemetry Saturation
+The most challenging technical hurdle was handling IPC back-pressure when telemetry output rates exceeded network consumer speeds. Initially, if Core 0 fell behind in rendering web responses, Core 1 risked blocking on full queues. 
+
+To resolve this without sacrificing determinism, I tuned xQueueSend to use a strict 5ms non-blocking timeout alongside a queue drop-counter. Ensuring that Core 1 drops non-essential logging packets rather than stalling the 50Hz control task required careful analysis of FreeRTOS task priority hierarchies and memory buffers.
+
+### Balancing Asynchronous I/O with Hard Rate-Monotonic Bounds
+Integrating an asynchronous HTTP web server on Core 0 while enforcing strict, periodic task execution on Core 1 presented subtle concurrency hazards. Early iterations triggered watchdog timer (WDT) resets due to core starvation whenever background TCP stack operations preempted lower-priority task cleanups. 
+
+Fixing this required pinning tasks explicitly to cores using xTaskCreatePinnedToCore, pinning the telemetry producer to Core 1 and offloading HTTP sockets to Core 0, while carefully managing yields using vTaskDelayUntil().
+
+---
+
+## 3. Most Valuable Lessons Learned
+
+### Mathematical Schedulability Proofs vs. Empirical Reality
+One of the most rewarding aspects of this capstone was completing the formal Rate-Monotonic Analysis (RMA) calculation: proving that our system's worst-case execution time yields a total utilization of U = 11.0%, which is well below the Liu and Layland bound of 75.68% for three periodic tasks. 
+
+This shifted my approach to embedded engineering. Schedulability isn't something you guess or hope for; it is an engineering guarantee calculated before writing critical flight loops.
+
+### Defensive Firmware Engineering & Fault Injection
+Designing the hardware-triggered fault injection suite reinforced the necessity of defensive programming in microcontrollers. Implementing low-latency task notifications (vTaskNotifyGiveFromISR) with a 200µs software debounce filter for manual fault triggers proved how fragile raw GPIO interrupts can be without software conditioning. Furthermore, adding explicit null-pointer guards (if responder_handle != NULL) and memory sanity checks across the boot sequence prevented kernel panics during cold-start scenarios.
+
+---
+
+## 4. Retrospective Conclusion
+
+Developing the SAT-1 telemetry node bridged the gap between theoretical real-time scheduling theory and practical embedded software development. Building fault-tolerant, dual-core systems requires equal attention to mathematical proofs, concurrency primitives, and hardware limitations. The resulting architecture serves as a robust foundation for flight software design and demonstrates the real-world application of deterministic system engineering.
