@@ -18,11 +18,9 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ---
 
 ## 3. System Architecture & Dual-Core Partitioning
-<img width="7617" height="6905" alt="Concurrency-Diagram-App5" src="https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e" />
-
-
-
-
+<div align="center" style="max-width: 800px; margin: 0 auto;">
+    <img width="100%" alt="Concurrency-Diagram-App5" src="[https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e](https://github.com/user-attachments/assets/461138b7-bedb-4ce1-8944-27ff8ebc2e0e)" />
+</div>
 
 ### IPC Primitive Contracts
 1. **Typed FIFO Queue (`data_q`):** Drains 32-byte `aocs_sample_t` payloads between `producer_task` and `consumer_task` with a 16-item depth buffer and a 5 ms non-blocking timeout policy.
