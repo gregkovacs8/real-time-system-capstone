@@ -1,7 +1,7 @@
 # SAT-1 Spacecraft Control Telemetry Matrix — EEL 4775 Capstone
 
 > **Target Role Focus:** Defense & Aerospace Embedded Firmware / Space Systems  
-> **Wokwi Simulation Target:** `KOVACS-A5-RTS26Summer`  
+> **Wokwi Simulation Target:** `KOVACS-FINAL-RTS26Summer`  
 > **Target MCU:** ESP32-S3 (Dual-Core Xtensa LX7 @ 240 MHz)
 
 ---
@@ -12,7 +12,7 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ---
 
 ## 2. System Demo & Links
-* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-A5-RTS26Summer](https://wokwi.com/projects/465279699182281729)
+* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/projects/465279699182281729)
 * **Embedded Demo Video:** *(Insert your YouTube video link here)*
 
 ---
