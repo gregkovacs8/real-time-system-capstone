@@ -12,7 +12,7 @@ A dual-core FreeRTOS flight control pipeline featuring deterministic Attitude an
 ---
 
 ## 2. System Demo & Links
-* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/projects/465279699182281729)
+* **Live Wokwi Simulation:** [Wokwi Project: KOVACS-FINAL-RTS26Summer](https://wokwi.com/projects/470018929306724353)
 * **Embedded Demo Video:** *(Insert your YouTube video link here)*
 
 ---
